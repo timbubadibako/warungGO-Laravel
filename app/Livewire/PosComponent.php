@@ -122,7 +122,8 @@ class PosComponent extends Component
             ]);
         }
 
-        // MIDTRANS: QRIS & DEBIT
+        // MIDTRANS: QRIS & DEBIT (DINONAKTIFKAN)
+        /*
         if (in_array($this->paymentMethod, ['qris', 'debit'])) {
             // Konfigurasi Midtrans Sandbox
             Config::$serverKey = config('midtrans.server_key');
@@ -147,7 +148,9 @@ class PosComponent extends Component
             $this->dispatch('midtrans-pay', snapToken: $snapToken);
             return;
         }
+        */
 
+        // SIMULASI PEMBAYARAN QRIS/DEBIT LANGSUNG DIANGGAP "PAID"
         $order = null;
         DB::transaction(function () use (&$order) {
             $orderData = [
@@ -158,7 +161,7 @@ class PosComponent extends Component
                 'tax' => $this->tax,
                 'total_amount' => $this->total,
                 'payment_method' => $this->paymentMethod,
-                'status' => ($this->paymentMethod == 'debt') ? 'debt' : 'paid',
+                'status' => ($this->paymentMethod == 'debt') ? 'debt' : 'paid', // SEMUA DIANGGAP PAID
             ];
 
             if (!empty($this->customerName)) {
@@ -199,7 +202,7 @@ class PosComponent extends Component
             }
         });
 
-        // Setelah transaksi sukses, HANYA lakukan redirect
+        // Setelah transaksi sukses, redirect ke receipt
         if ($order) {
             return $this->redirect(route('receipt.show', $order));
         }

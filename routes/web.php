@@ -16,7 +16,7 @@ use App\Http\Controllers\MidtransCallbackController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view(view: 'auth/login');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])

@@ -14,17 +14,33 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
+    <body class="font-sans text-gray-900 antialiased bg-gray-200 overflow-hidden">
+        {{-- Kontainer utama dengan margin di sekelilingnya --}}
+        <div class="absolute inset-8 rounded-3xl shadow-lg overflow-hidden">
+
+            {{-- Div dengan gambar latar yang mengisi kontainer utama --}}
+            <div
+                class="h-full w-full flex items-center justify-end bg-cover bg-center"
+                style="background-image: url('https://placehold.co/1920x1080/a3e635/44403c?text=WarungGo+Background');"
+            >
+                {{-- Card Form di sisi kanan dengan ukuran yang disesuaikan --}}
+                <div class="w-1/3 min-h-[90vh] bg-white rounded-2xl shadow-2xl p-12 mr-8 flex flex-col justify-center">
+
+                    {{-- Logo Aplikasi --}}
+                    <div class="w-xl mx-40 my-40">
+                        <div class="text-center mb-8">
+                            <a href="/">
+                                <x-application-logo class="w-20 h-20 fill-current text-gray-500 mx-auto" />
+                            </a>
+                        </div>
+
+                        {{-- Slot untuk konten form (login.blade.php) --}}
+                        {{ $slot }}
+                    </div>
+                </div>
+
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
         </div>
     </body>
 </html>
