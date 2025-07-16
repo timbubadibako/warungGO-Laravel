@@ -15,7 +15,7 @@
             {{-- Link untuk semua user (Admin & Kasir) --}}
             <x-side-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 <x-slot name="icon">
-                    <x-lucide-tv-minimal class="w-8 h-8" />
+                    <x-lucide-blocks class="w-8 h-8" />
                 </x-slot>
                 <span class="hidden lg:inline">Dashboard</span>
             </x-side-nav-link>

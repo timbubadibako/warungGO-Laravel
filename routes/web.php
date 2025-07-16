@@ -42,12 +42,12 @@ Route::middleware('auth')->group(function () {
         Route::post('purchases/{purchase}/complete', [PurchaseController::class, 'complete'])->name('purchases.complete');
         Route::resource('purchases', PurchaseController::class);
         // Rute untuk Pengiriman
-        Route::get('/deliveries', [DeliveryController::class, 'index'])->name('deliveries.index');
-        Route::post('/deliveries/{order}/update-status', [DeliveryController::class, 'updateStatus'])->name('deliveries.updateStatus');
 
-        Route::get('/debts', [DebtController::class, 'index'])->name('debts.index');
-        Route::patch('/debts/{debt}/pay', [DebtController::class, 'pay'])->name('debts.pay');
     });
+    Route::get('/deliveries', [DeliveryController::class, 'index'])->name('deliveries.index');
+    Route::post('/deliveries/{order}/update-status', [DeliveryController::class, 'updateStatus'])->name('deliveries.updateStatus');
+    Route::get('/debts', [DebtController::class, 'index'])->name('debts.index');
+    Route::patch('/debts/{debt}/pay', [DebtController::class, 'pay'])->name('debts.pay');
 
     Route::get('/pos', \App\Livewire\PosComponent::class)
         ->name('pos.index')

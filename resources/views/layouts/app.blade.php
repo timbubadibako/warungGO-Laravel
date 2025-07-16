@@ -14,9 +14,8 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://unpkg.com/lucide@latest"></script>
 
-        @stack('scripts')
+        {{-- @stack('scripts') --}}
     </head>
     <body class="font-sans antialiased">
         <div class="h-screen flex bg-white">
@@ -34,5 +33,6 @@
                 </main>
             </div>
         </div>
+        @stack('scripts')
     </body>
 </html>
