@@ -2,15 +2,14 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController; // Tambahkan di atas
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CategoryController; // Tambahkan ini
-use App\Http\Controllers\SupplierController; // Tambahkan ini
-use App\Http\Controllers\PurchaseController; // Tambahkan ini
-use App\Http\Controllers\DeliveryController; // Tambahkan ini
-use App\Http\Controllers\ReceiptController; // Tambahkan ini
-use App\Http\Controllers\DebtController; // Tambahkan ini
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\DebtController;
 use App\Http\Controllers\MidtransCallbackController;
 
 
@@ -26,28 +25,29 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // User management routes for admins (inside profile)
     Route::middleware(['role:Admin'])->group(function () {
-        // routes/web.php
-    Route::resource('users', UserController::class); // Tambahkan ini
+        Route::post('/profile/users', [ProfileController::class, 'storeUser'])->name('profile.users.store');
+        Route::patch('/profile/users/{targetUser}', [ProfileController::class, 'updateUser'])->name('profile.users.update');
+        Route::delete('/profile/users/{targetUser}', [ProfileController::class, 'destroyUser'])->name('profile.users.destroy');
+    });
 
-
-        Route::resource('products', ProductController::class);
-        Route::resource('categories', App\Http\Controllers\CategoryController::class); // Tambahkan ini
+    Route::middleware(['role:Admin'])->group(function () {
         Route::resource('products', ProductController::class);
         Route::resource('categories', App\Http\Controllers\CategoryController::class);
-        Route::resource('suppliers', App\Http\Controllers\SupplierController::class); // Tambahkan ini
-        // Tambahkan rute untuk modul lain di sini nanti
+        Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
         // Rute untuk Pembelian
         Route::post('purchases/{purchase}/add-item', [PurchaseController::class, 'addItem'])->name('purchases.addItem');
         Route::post('purchases/{purchase}/complete', [PurchaseController::class, 'complete'])->name('purchases.complete');
         Route::resource('purchases', PurchaseController::class);
-        // Rute untuk Pengiriman
-
     });
     Route::get('/deliveries', [DeliveryController::class, 'index'])->name('deliveries.index');
-    Route::post('/deliveries/{order}/update-status', [DeliveryController::class, 'updateStatus'])->name('deliveries.updateStatus');
+    Route::post('/deliveries/{order}/status', [DeliveryController::class, 'updateStatus'])->name('deliveries.updateStatus');
+    Route::get('/deliveries/{order}/details', [DeliveryController::class, 'details'])->name('deliveries.details');
     Route::get('/debts', [DebtController::class, 'index'])->name('debts.index');
     Route::patch('/debts/{debt}/pay', [DebtController::class, 'pay'])->name('debts.pay');
+    Route::get('/debts/{debt}/details', [DebtController::class, 'details'])->name('debts.details');
 
     Route::get('/pos', \App\Livewire\PosComponent::class)
         ->name('pos.index')

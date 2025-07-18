@@ -8,18 +8,22 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Buat Roles
-        $adminRole = Role::create(['name' => 'Admin']);
-        $kasirRole = Role::create(['name' => 'Kasir']);
+        // Buat Roles jika belum ada
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $kasirRole = Role::firstOrCreate(['name' => 'Kasir']);
 
-        // Buat User Admin
-        $adminUser = User::create([
-            'name' => 'Admin Warung',
-            'email' => 'admin@warunggo.com',
-            'password' => bcrypt('password') // ganti dengan password aman
-        ]);
+        // Buat User Admin jika belum ada
+        $adminUser = User::firstOrCreate(
+            ['email' => 'admin@warunggo.com'],
+            [
+                'name' => 'Admin Warung',
+                'password' => bcrypt('password') // ganti dengan password aman
+            ]
+        );
 
-        // Berikan role 'Admin' ke user tersebut
-        $adminUser->assignRole($adminRole);
+        // Berikan role 'Admin' ke user tersebut jika belum punya
+        if (!$adminUser->hasRole('Admin')) {
+            $adminUser->assignRole($adminRole);
+        }
     }
 }

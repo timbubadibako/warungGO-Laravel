@@ -11,7 +11,10 @@ class DebtController extends Controller
     public function index()
     {
         // Ambil semua hutang yang belum lunas, urutkan dari yang terbaru
-        $unpaidDebts = Debt::where('status', 'unpaid')->with('order')->latest()->get();
+        $unpaidDebts = Debt::where('status', 'unpaid')
+                          ->with(['order.items.product', 'order.user'])
+                          ->latest()
+                          ->get();
 
         return view('debts.index', compact('unpaidDebts'));
     }
@@ -29,6 +32,17 @@ class DebtController extends Controller
             $debt->order->update(['status' => 'paid']);
         }
 
-        return redirect()->route('debts.index');
+        return redirect()->route('debts.index')
+                        ->with('success', 'Hutang atas nama "' . $debt->customer_name . '" sebesar Rp ' . number_format($debt->amount, 0, ',', '.') . ' berhasil ditandai lunas!');
+    }
+
+    public function details(Debt $debt)
+    {
+        // Load relasi yang diperlukan
+        $debt->load(['order.items.product', 'order.user']);
+
+        $html = view('debts.partials.detail', compact('debt'))->render();
+        
+        return response()->json(['html' => $html]);
     }
 }
