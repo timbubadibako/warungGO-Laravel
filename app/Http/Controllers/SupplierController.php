@@ -9,7 +9,7 @@ class SupplierController extends Controller
 {
     public function index()
     {
-        $suppliers = Supplier::latest()->get();
+        $suppliers = Supplier::withCount('purchases')->latest()->get();
         return view('suppliers.index', compact('suppliers'));
     }
 
@@ -23,12 +23,20 @@ class SupplierController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone_number' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
+            'contact_person' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
         ]);
 
         Supplier::create($request->all());
 
         return redirect()->route('suppliers.index');
+    }
+
+    public function show(Supplier $supplier)
+    {
+        return view('suppliers.show', compact('supplier'));
     }
 
     public function edit(Supplier $supplier)
@@ -41,7 +49,10 @@ class SupplierController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone_number' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
+            'contact_person' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
         ]);
 
         $supplier->update($request->all());

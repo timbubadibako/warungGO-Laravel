@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-green-50 p-6">
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-green-50 p-6" x-data="purchaseModal()">
         <!-- Header Section -->
         <div class="mb-8">
             <div class="flex items-center justify-between">
@@ -9,11 +9,11 @@
                     </h1>
                     <p class="text-gray-600 mt-2">Kelola dan pantau semua transaksi pembelian</p>
                 </div>
-                <a href="{{ route('purchases.create') }}"
+                <button @click="openCreateModal()"
                     class="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                     <x-lucide-plus class="w-5 h-5 mr-2" />
                     Catat Pembelian
-                </a>
+                </button>
             </div>
         </div>
 
@@ -206,14 +206,153 @@
                     </div>
                     <h3 class="text-lg font-medium text-gray-500 mb-2">Belum Ada Pembelian</h3>
                     <p class="text-gray-400 mb-6">Mulai dengan mencatat pembelian pertama Anda</p>
-                    <a href="{{ route('purchases.create') }}"
+                    <button @click="openCreateModal()"
                         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-xl hover:shadow-lg transition-all">
                         <x-lucide-plus class="w-5 h-5 mr-2" />
                         Catat Pembelian
-                    </a>
+                    </button>
                 </div>
             @endif
         </div>
+
+        <!-- Modal Popup -->
+        <div
+            x-show="showModal"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            @click.self="closeModal()"
+        >
+            <div
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                @click.stop
+            >
+                @include('purchases.partials.form')
+            </div>
+        </div>
     </div>
+
+    <script>
+        function purchaseModal() {
+            return {
+                showModal: false,
+                editMode: false,
+                currentPurchase: {},
+                products: @json($products),
+                formData: {
+                    supplier_id: '',
+                    purchase_date: new Date().toISOString().split('T')[0],
+                    status: 'pending',
+                    total_amount: 0,
+                    items: []
+                },
+
+                openCreateModal() {
+                    this.editMode = false;
+                    this.formData = {
+                        supplier_id: '',
+                        purchase_date: new Date().toISOString().split('T')[0],
+                        status: 'pending',
+                        total_amount: 0,
+                        items: [{ product_id: '', quantity: 1, cost_price: 0, subtotal: 0 }]
+                    };
+                    this.showModal = true;
+                    document.body.style.overflow = 'hidden';
+                },
+
+                openEditModal(purchase) {
+                    this.editMode = true;
+                    this.currentPurchase = purchase;
+                    this.formData = {
+                        supplier_id: purchase.supplier_id || '',
+                        purchase_date: purchase.purchase_date || '',
+                        status: purchase.status || 'pending',
+                        total_amount: purchase.total_amount || 0,
+                        items: purchase.items && purchase.items.length > 0
+                            ? purchase.items.map(item => ({
+                                product_id: item.product_id,
+                                quantity: item.quantity,
+                                cost_price: item.cost_price,
+                                subtotal: item.quantity * item.cost_price
+                            }))
+                            : [{ product_id: '', quantity: 1, cost_price: 0, subtotal: 0 }]
+                    };
+                    this.showModal = true;
+                    document.body.style.overflow = 'hidden';
+                },
+
+                closeModal() {
+                    this.showModal = false;
+                    document.body.style.overflow = 'auto';
+                    this.currentPurchase = {};
+                    this.formData = {
+                        supplier_id: '',
+                        purchase_date: new Date().toISOString().split('T')[0],
+                        status: 'pending',
+                        total_amount: 0,
+                        items: []
+                    };
+                },
+
+                addPurchaseItem() {
+                    this.formData.items.push({
+                        product_id: '',
+                        quantity: 1,
+                        cost_price: 0,
+                        subtotal: 0
+                    });
+                },
+
+                removePurchaseItem(index) {
+                    if (this.formData.items.length > 1) {
+                        this.formData.items.splice(index, 1);
+                        this.calculateTotal();
+                    }
+                },
+
+                onProductChange(index) {
+                    const item = this.formData.items[index];
+                    const selectedProduct = this.products.find(p => p.id == item.product_id);
+
+                    if (selectedProduct) {
+                        // Auto-fill cost price with product's purchase price
+                        item.cost_price = parseFloat(selectedProduct.purchase_price);
+                    } else {
+                        item.cost_price = 0;
+                    }
+
+                    this.updateItemCalculation(index);
+                },
+
+                updateItemCalculation(index) {
+                    const item = this.formData.items[index];
+                    item.subtotal = (item.quantity || 0) * (item.cost_price || 0);
+                    this.calculateTotal();
+                },
+
+                calculateTotal() {
+                    this.formData.total_amount = this.formData.items.reduce((total, item) => {
+                        return total + (item.subtotal || 0);
+                    }, 0);
+                },
+
+                formatCurrency(amount) {
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR'
+                    }).format(amount);
+                }
+            }
+        }
+    </script>
 </x-app-layout>
-        

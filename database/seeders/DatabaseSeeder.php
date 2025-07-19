@@ -3,6 +3,12 @@
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\SupplierSeeder;
+use Database\Seeders\ProductSeeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\DebtSeeder;
+use Database\Seeders\DeliverySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,5 +31,13 @@ class DatabaseSeeder extends Seeder
         if (!$adminUser->hasRole('Admin')) {
             $adminUser->assignRole($adminRole);
         }
+
+        $this->call([
+            CategorySeeder::class,
+            SupplierSeeder::class,
+            ProductSeeder::class,
+            DeliverySeeder::class,
+            DebtSeeder::class,
+        ]);
     }
 }

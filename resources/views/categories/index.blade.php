@@ -9,6 +9,11 @@
                     </h1>
                     <p class="text-gray-600 mt-2">Kelola kategori produk untuk mengorganisir inventori</p>
                 </div>
+                <button @click="openCreateModal()"
+                    class="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                    <x-lucide-plus class="w-5 h-5 mr-2" />
+                    Tambah Produk
+                </button>
             </div>
         </div>
 
@@ -32,19 +37,7 @@
                         <x-lucide-package class="w-6 h-6 text-green-600" />
                     </div>
                     <div class="ml-4">
-                        <p class="text-gray-500 text-sm">Kategori Aktif</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $categories->count() }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                        <x-lucide-archive class="w-6 h-6 text-yellow-600" />
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-500 text-sm">Produk Total</p>
+                        <p class="text-gray-500 text-sm">Total Produk</p>
                         <p class="text-2xl font-bold text-gray-800">{{ $categories->sum('products_count') ?? 0 }}</p>
                     </div>
                 </div>
@@ -52,12 +45,24 @@
 
             <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                        <x-lucide-trending-up class="w-6 h-6 text-purple-600" />
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                        <x-lucide-alert-triangle class="w-6 h-6 text-yellow-600" />
                     </div>
                     <div class="ml-4">
-                        <p class="text-gray-500 text-sm">Terpopuler</p>
-                        <p class="text-xl font-bold text-gray-800">{{ $categories->first()?->name ?? 'N/A' }}</p>
+                        <p class="text-gray-500 text-sm">Kategori Kurang Laris</p>
+                        <p class="text-2xl font-bold text-gray-800">Aksesoris</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <x-lucide-clock class="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-500 text-sm">Kategori Terlaris</p>
+                        <p class="text-2xl font-bold text-gray-800">Makanan dan Minuman</p>
                     </div>
                 </div>
             </div>

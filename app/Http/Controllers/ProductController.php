@@ -11,9 +11,12 @@ class ProductController extends Controller
     // Menampilkan semua produk
     public function index()
     {
+        $activeCategories = Category::where('is_active', true)
+            ->withCount('products')
+            ->get();
         // 'with('category')' untuk eager loading, lebih efisien
         $products = Product::with('category')->latest()->get();
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'activeCategories'));
     }
 
     // Menampilkan form tambah produk

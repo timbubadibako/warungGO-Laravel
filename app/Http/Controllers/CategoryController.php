@@ -5,14 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; // Import Str
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
     // Menampilkan semua kategori
     public function index()
     {
-        $categories = Category::latest()->get();
-        return view('categories.index', compact('categories'));
+        // Ambil semua kategori dengan count produk
+        $categories = Category::withCount('products')->latest()->get();
+
+        //kategori kurang diminati
+        $sepiPeminat = $categories->filter(fn($category) => $category->products_count === 0);
+
+        // Terpopuler kategori
+        $terpopuler = $categories->sortByDesc('products_count')->take(5);
+        // Debug info
+        Log::info('Categories count: ' . $categories->count());
+        Log::info('Categories with products_count:', $categories->pluck('name', 'products_count')->toArray());
+
+        return view('categories.index', compact('categories', 'sepiPeminat', 'terpopuler'));
     }
 
     // Menampilkan form tambah kategori

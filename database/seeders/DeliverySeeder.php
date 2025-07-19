@@ -12,10 +12,8 @@ class DeliverySeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil produk yang sudah ada
+        // Ambil produk dan user
         $products = Product::all();
-
-        // Ambil user untuk kasir
         $users = User::all();
 
         if ($products->isEmpty() || $users->isEmpty()) {
@@ -23,42 +21,38 @@ class DeliverySeeder extends Seeder
             return;
         }
 
-        // Data alamat dummy untuk kelurahan
+        // Alamat dan catatan delivery dummy
         $addresses = [
-            'Jl. Mawar No. 15, RT 03 RW 05, Kelurahan Sumber Jaya',
-            'Jl. Melati No. 8, RT 02 RW 03, Kelurahan Sumber Jaya',
-            'Jl. Kenanga No. 22, RT 01 RW 02, Kelurahan Sumber Jaya',
-            'Jl. Anggrek No. 5, RT 04 RW 06, Kelurahan Sumber Jaya',
-            'Jl. Dahlia No. 12, RT 05 RW 07, Kelurahan Sumber Jaya',
-            'Jl. Tulip No. 9, RT 02 RW 04, Kelurahan Sumber Jaya',
-            'Jl. Sakura No. 18, RT 03 RW 05, Kelurahan Sumber Jaya',
-            'Jl. Bougenville No. 25, RT 01 RW 03, Kelurahan Sumber Jaya',
+            'Jl. Mangga No. 10, RT 01 RW 01, Kelurahan Sumber Jaya',
+            'Jl. Salak No. 2, RT 02 RW 01, Kelurahan Sumber Jaya',
+            'Jl. Pisang No. 5, RT 03 RW 02, Kelurahan Sumber Jaya',
+            'Jl. Durian No. 18, RT 04 RW 02, Kelurahan Sumber Jaya',
+            'Jl. Rambutan No. 7, RT 05 RW 03, Kelurahan Sumber Jaya',
+            'Jl. Melon No. 22, RT 06 RW 03, Kelurahan Sumber Jaya',
         ];
 
         $customerNotes = [
-            'Mohon antarkan ke depan rumah yang ada pagar hijau',
-            'Rumah di samping warung pak Budi',
-            'Telepon dulu sebelum antar, rumah susah dicari',
-            'Titip ke tetangga jika tidak ada di rumah',
-            'Antarkan sore hari setelah jam 17:00',
-            'Rumah yang ada kandang ayam di depan',
-            'Lewat gang kecil, rumah nomor 15',
-            null, // Tanpa catatan
+            'Tolong antar sebelum jam 12 siang.',
+            'Rumah pagar biru, depan masjid.',
+            'Mohon telepon sebelum sampai.',
+            'Titip ke warung sebelah jika saya tidak di rumah.',
+            'Rumah di pojok gang, ada tanaman rambat.',
+            null,
         ];
 
         $deliveryStatuses = ['pending', 'preparing', 'out_for_delivery', 'delivered'];
 
-        // Buat 15 pesanan delivery dummy
-        for ($i = 1; $i <= 15; $i++) {
+        // Buat 10 pesanan delivery dummy
+        for ($i = 1; $i <= 10; $i++) {
             $subTotal = 0;
-            $deliveryFee = rand(5, 15) * 1000; // 5k - 15k ongkir
+            $deliveryFee = rand(5, 12) * 1000; // 5k - 12k ongkir
 
             // Buat order
             $order = Order::create([
                 'invoice_number' => 'DLV-' . date('Ymd') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'user_id' => $users->random()->id,
                 'order_type' => 'delivery',
-                'sub_total' => 0, // akan diupdate setelah menambah items
+                'sub_total' => 0, // akan diupdate
                 'tax' => 0,
                 'delivery_fee' => $deliveryFee,
                 'total_amount' => 0, // akan diupdate
@@ -67,15 +61,28 @@ class DeliverySeeder extends Seeder
                 'delivery_status' => collect($deliveryStatuses)->random(),
                 'customer_address' => $addresses[array_rand($addresses)],
                 'customer_notes' => $customerNotes[array_rand($customerNotes)],
-                'created_at' => now()->subHours(rand(1, 72)), // 1-72 jam yang lalu
+                'created_at' => now()->subHours(rand(1, 48)), // 1-48 jam yang lalu
             ]);
 
-            // Tambahkan 2-5 item per order
+            // Ambil kategori warung (sesuai ProductSeeder kategori)
+            $categories = [
+                'Makanan Ringan', 'Minuman', 'Makanan Instan', 'Sembako', 'Bumbu Dapur & Rempah',
+                'Perlengkapan Rumah Tangga', 'Produk Kebersihan Pribadi', 'Kue & Roti', 'Cemilan Tradisional'
+            ];
+
+            // Tambahkan 2-5 item per order (acak kategori warung)
             $itemCount = rand(2, 5);
+            $usedProductIds = [];
             for ($j = 0; $j < $itemCount; $j++) {
-                $product = $products->random();
+                // Cari produk random dari kategori warung
+                $categoryProducts = $products->whereIn('category_id',
+                    \App\Models\Category::whereIn('name', $categories)->pluck('id')->toArray()
+                );
+                $product = $categoryProducts->whereNotIn('id', $usedProductIds)->random();
+                $usedProductIds[] = $product->id;
+
                 $quantity = rand(1, 3);
-                $price = $product->price;
+                $price = $product->selling_price;
 
                 OrderItem::create([
                     'order_id' => $order->id,
@@ -94,6 +101,6 @@ class DeliverySeeder extends Seeder
             ]);
         }
 
-        $this->command->info('15 pesanan delivery dummy berhasil dibuat!');
+        $this->command->info('10 pesanan delivery dummy khas warung berhasil dibuat!');
     }
 }

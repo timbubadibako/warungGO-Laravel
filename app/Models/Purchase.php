@@ -6,7 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Purchase extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'supplier_id',
+        'total_amount',
+        'status',
+        'purchase_date'
+    ];
+
+    protected $casts = [
+        'purchase_date' => 'date',
+        'total_amount' => 'decimal:2'
+    ];
 
     public function supplier()
     {

@@ -91,7 +91,7 @@
                                 <select
                                     id="category_id"
                                     name="category_id"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('category_id') border-red-300 @enderror"
+                                    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('category_id') border-red-300 @enderror"
                                     required
                                 >
                                     <option value="">Pilih Kategori</option>
@@ -141,7 +141,7 @@
                                         id="purchase_price"
                                         name="purchase_price"
                                         value="{{ old('purchase_price') }}"
-                                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('purchase_price') border-red-300 @enderror"
+                                        class="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('purchase_price') border-red-300 @enderror"
                                         placeholder="0"
                                         required
                                     >
@@ -167,7 +167,7 @@
                                         id="selling_price"
                                         name="selling_price"
                                         value="{{ old('selling_price') }}"
-                                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('selling_price') border-red-300 @enderror"
+                                        class="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('selling_price') border-red-300 @enderror"
                                         placeholder="0"
                                         required
                                     >
@@ -191,7 +191,7 @@
                                     id="stock"
                                     name="stock"
                                     value="{{ old('stock', 0) }}"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('stock') border-red-300 @enderror"
+                                    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('stock') border-red-300 @enderror"
                                     placeholder="0"
                                     min="0"
                                     required

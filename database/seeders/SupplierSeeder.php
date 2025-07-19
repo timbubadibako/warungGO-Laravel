@@ -12,38 +12,28 @@ class SupplierSeeder extends Seeder
         $suppliers = [
             [
                 'name' => 'CV. Sumber Rejeki',
-                'email' => 'info@sumberrejeki.com',
-                'phone' => '0271-123456',
+                'phone_number' => '0271-123456',
                 'address' => 'Jl. Raya Solo-Yogya KM 12, Klaten',
-                'contact_person' => 'Bapak Slamet',
             ],
             [
                 'name' => 'UD. Maju Jaya',
-                'email' => 'majujaya@gmail.com',
-                'phone' => '0271-789012',
+                'phone_number' => '0271-789012',
                 'address' => 'Jl. Pemuda No. 45, Solo',
-                'contact_person' => 'Ibu Siti',
             ],
             [
                 'name' => 'PT. Berkah Mandiri',
-                'email' => 'berkah@mandiri.co.id',
-                'phone' => '0274-345678',
+                'phone_number' => '0274-345678',
                 'address' => 'Jl. Malioboro No. 100, Yogyakarta',
-                'contact_person' => 'Bapak Wahyu',
             ],
             [
                 'name' => 'Toko Grosir Sejahtera',
-                'email' => 'sejahtera.grosir@yahoo.com',
-                'phone' => '0271-567890',
+                'phone_number' => '0271-567890',
                 'address' => 'Jl. Ahmad Yani No. 23, Surakarta',
-                'contact_person' => 'Bapak Agus',
             ],
             [
                 'name' => 'CV. Barokah Abadi',
-                'email' => 'barokah.abadi@outlook.com',
-                'phone' => '0274-234567',
+                'phone_number' => '0274-234567',
                 'address' => 'Jl. Veteran No. 67, Yogyakarta',
-                'contact_person' => 'Ibu Dewi',
             ],
         ];
 

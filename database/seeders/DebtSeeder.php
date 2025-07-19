@@ -13,10 +13,8 @@ class DebtSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil produk yang sudah ada
+        // Ambil semua produk dan user
         $products = Product::all();
-        
-        // Ambil user untuk kasir
         $users = User::all();
 
         if ($products->isEmpty() || $users->isEmpty()) {
@@ -24,7 +22,7 @@ class DebtSeeder extends Seeder
             return;
         }
 
-        // Data pelanggan dummy
+        // Data pelanggan hutang (dummy)
         $customers = [
             'Budi Santoso',
             'Siti Rahayu',
@@ -34,36 +32,42 @@ class DebtSeeder extends Seeder
             'Maya Sari',
             'Bambang Sutrisno',
             'Rina Wati',
+            'Yusuf Hidayat',
+            'Linda Permata'
         ];
 
-        // Buat 8 transaksi hutang dummy
-        for ($i = 1; $i <= 8; $i++) {
+        // Buat 10 transaksi hutang dummy
+        for ($i = 1; $i <= 10; $i++) {
             $subTotal = 0;
-            $customerName = $customers[array_rand($customers)];
-            
-            // Buat order dengan status debt
+            $customerName = $customers[$i-1];
+
             $order = Order::create([
                 'invoice_number' => 'DEBT-' . date('Ymd') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'user_id' => $users->random()->id,
                 'order_type' => 'in_store',
-                'sub_total' => 0, // akan diupdate setelah menambah items
+                'sub_total' => 0,
                 'tax' => 0,
                 'delivery_fee' => 0,
-                'total_amount' => 0, // akan diupdate
+                'total_amount' => 0,
                 'payment_method' => 'debt',
                 'status' => 'debt',
                 'customer_address' => null,
-                'customer_notes' => 'Hutang untuk ' . $customerName,
-                'created_at' => now()->subDays(rand(1, 45)), // 1-45 hari yang lalu
+                'customer_notes' => 'Hutang atas nama ' . $customerName,
+                'created_at' => now()->subDays(rand(1, 45)),
             ]);
 
-            // Tambahkan 1-4 item per order
-            $itemCount = rand(1, 4);
+            // 2-5 item unik per order
+            $itemCount = rand(2, 5);
+            $usedProductIds = [];
             for ($j = 0; $j < $itemCount; $j++) {
-                $product = $products->random();
+                $availableProducts = $products->whereNotIn('id', $usedProductIds);
+                if ($availableProducts->isEmpty()) break;
+                $product = $availableProducts->random();
+                $usedProductIds[] = $product->id;
+
                 $quantity = rand(1, 3);
-                $price = $product->price;
-                
+                $price = property_exists($product, 'selling_price') ? $product->selling_price : $product->price;
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
@@ -74,13 +78,13 @@ class DebtSeeder extends Seeder
                 $subTotal += $quantity * $price;
             }
 
-            // Update total order
+            // Update order total
             $order->update([
                 'sub_total' => $subTotal,
                 'total_amount' => $subTotal,
             ]);
 
-            // Buat record debt
+            // Buat record hutang
             Debt::create([
                 'order_id' => $order->id,
                 'customer_name' => $customerName,
@@ -90,6 +94,6 @@ class DebtSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('8 data hutang dummy berhasil dibuat!');
+        $this->command->info('10 data hutang dummy berhasil dibuat!');
     }
 }

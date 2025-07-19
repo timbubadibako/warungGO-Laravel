@@ -15,7 +15,9 @@ class PurchaseController extends Controller
     public function index()
     {
         $purchases = Purchase::with('supplier')->latest()->get();
-        return view('purchases.index', compact('purchases'));
+        $suppliers = Supplier::all();
+        $products = Product::select('id', 'name', 'purchase_price')->get();
+        return view('purchases.index', compact('purchases', 'suppliers', 'products'));
     }
 
     // Menampilkan form untuk membuat nota pembelian baru
@@ -25,18 +27,44 @@ class PurchaseController extends Controller
         return view('purchases.create', compact('suppliers'));
     }
 
-    // Menyimpan nota pembelian baru (tanpa item)
+    // Menyimpan nota pembelian baru dengan items
     public function store(Request $request)
     {
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'purchase_date' => 'required|date',
+            'status' => 'nullable|in:pending,completed',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.cost_price' => 'required|numeric|min:0',
         ]);
 
-        $purchase = Purchase::create($request->all());
+        // Calculate total amount
+        $totalAmount = 0;
+        $items = $request->input('items');
+        foreach ($items as $item) {
+            $totalAmount += $item['quantity'] * $item['cost_price'];
+        }
 
-        // Langsung arahkan ke halaman detail untuk menambah item
-        return redirect()->route('purchases.show', $purchase);
+        // Create purchase
+        $purchase = Purchase::create([
+            'supplier_id' => $request->input('supplier_id'),
+            'purchase_date' => $request->input('purchase_date'),
+            'total_amount' => $totalAmount,
+            'status' => $request->input('status') ?? 'pending',
+        ]);
+
+        // Create purchase items
+        foreach ($items as $item) {
+            $purchase->items()->create([
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'cost_price' => $item['cost_price'],
+            ]);
+        }
+
+        return redirect()->route('purchases.index')->with('success', 'Purchase created successfully!');
     }
 
     // Menampilkan detail satu pembelian (untuk menambah item)
@@ -46,6 +74,33 @@ class PurchaseController extends Controller
         // Eager load relasi untuk efisiensi
         $purchase->load('items.product', 'supplier');
         return view('purchases.show', compact('purchase', 'products'));
+    }
+
+    // Menampilkan form untuk mengedit pembelian
+    public function edit(Purchase $purchase)
+    {
+        $suppliers = Supplier::all();
+        return view('purchases.edit', compact('purchase', 'suppliers'));
+    }
+
+    // Memperbarui pembelian
+    public function update(Request $request, Purchase $purchase)
+    {
+        $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'purchase_date' => 'required|date',
+            'total_amount' => 'nullable|numeric|min:0',
+            'status' => 'nullable|in:pending,completed',
+        ]);
+
+        $purchase->update([
+            'supplier_id' => $request->input('supplier_id'),
+            'purchase_date' => $request->input('purchase_date'),
+            'total_amount' => $request->input('total_amount') ?? $purchase->total_amount,
+            'status' => $request->input('status') ?? $purchase->status,
+        ]);
+
+        return redirect()->route('purchases.index')->with('success', 'Purchase updated successfully!');
     }
 
     // Method untuk menambah item ke nota pembelian
