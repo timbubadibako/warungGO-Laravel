@@ -3,7 +3,7 @@
         <!-- Header Section -->
         <div class="mb-8">
             <div class="flex items-center space-x-4">
-                <a href="{{ route('products.index') }}" 
+                <a href="{{ route('products.index') }}"
                     class="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
                     <x-lucide-arrow-left class="w-5 h-5 mr-2" />
                     Kembali
@@ -55,7 +55,7 @@
                 <!-- Form -->
                 <form action="{{ route('products.store') }}" method="POST" class="p-8">
                     @csrf
-                    
+
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Left Column -->
                         <div class="space-y-6">
@@ -65,16 +65,16 @@
                                     <x-lucide-tag class="w-4 h-4 inline mr-2" />
                                     Nama Produk
                                 </label>
-                                <input 
-                                    type="text" 
-                                    id="name" 
-                                    name="name" 
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
                                     value="{{ old('name') }}"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('name') border-red-300 @enderror"
+                                    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('name') border-red-300 @enderror"
                                     placeholder="Masukkan nama produk"
                                     required
                                 >
-                                @error('name') 
+                                @error('name')
                                     <p class="mt-2 text-sm text-red-600 flex items-center">
                                         <x-lucide-alert-circle class="w-4 h-4 mr-1" />
                                         {{ $message }}
@@ -88,8 +88,8 @@
                                     <x-lucide-grid-3x3 class="w-4 h-4 inline mr-2" />
                                     Kategori
                                 </label>
-                                <select 
-                                    id="category_id" 
+                                <select
+                                    id="category_id"
                                     name="category_id"
                                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('category_id') border-red-300 @enderror"
                                     required
@@ -101,7 +101,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('category_id') 
+                                @error('category_id')
                                     <p class="mt-2 text-sm text-red-600 flex items-center">
                                         <x-lucide-alert-circle class="w-4 h-4 mr-1" />
                                         {{ $message }}
@@ -115,10 +115,10 @@
                                     <x-lucide-scan class="w-4 h-4 inline mr-2" />
                                     Barcode (Opsional)
                                 </label>
-                                <input 
-                                    type="text" 
-                                    id="barcode" 
-                                    name="barcode" 
+                                <input
+                                    type="text"
+                                    id="barcode"
+                                    name="barcode"
                                     value="{{ old('barcode') }}"
                                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200"
                                     placeholder="Scan atau ketik barcode"
@@ -136,17 +136,17 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rp</span>
-                                    <input 
-                                        type="number" 
-                                        id="purchase_price" 
-                                        name="purchase_price" 
+                                    <input
+                                        type="number"
+                                        id="purchase_price"
+                                        name="purchase_price"
                                         value="{{ old('purchase_price') }}"
                                         class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('purchase_price') border-red-300 @enderror"
                                         placeholder="0"
                                         required
                                     >
                                 </div>
-                                @error('purchase_price') 
+                                @error('purchase_price')
                                     <p class="mt-2 text-sm text-red-600 flex items-center">
                                         <x-lucide-alert-circle class="w-4 h-4 mr-1" />
                                         {{ $message }}
@@ -162,17 +162,17 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rp</span>
-                                    <input 
-                                        type="number" 
-                                        id="selling_price" 
-                                        name="selling_price" 
+                                    <input
+                                        type="number"
+                                        id="selling_price"
+                                        name="selling_price"
                                         value="{{ old('selling_price') }}"
                                         class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('selling_price') border-red-300 @enderror"
                                         placeholder="0"
                                         required
                                     >
                                 </div>
-                                @error('selling_price') 
+                                @error('selling_price')
                                     <p class="mt-2 text-sm text-red-600 flex items-center">
                                         <x-lucide-alert-circle class="w-4 h-4 mr-1" />
                                         {{ $message }}
@@ -186,17 +186,17 @@
                                     <x-lucide-package-2 class="w-4 h-4 inline mr-2" />
                                     Stok Awal
                                 </label>
-                                <input 
-                                    type="number" 
-                                    id="stock" 
-                                    name="stock" 
+                                <input
+                                    type="number"
+                                    id="stock"
+                                    name="stock"
                                     value="{{ old('stock', 0) }}"
                                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200 @error('stock') border-red-300 @enderror"
                                     placeholder="0"
                                     min="0"
                                     required
                                 >
-                                @error('stock') 
+                                @error('stock')
                                     <p class="mt-2 text-sm text-red-600 flex items-center">
                                         <x-lucide-alert-circle class="w-4 h-4 mr-1" />
                                         {{ $message }}
@@ -212,9 +212,9 @@
                             <x-lucide-file-text class="w-4 h-4 inline mr-2" />
                             Deskripsi (Opsional)
                         </label>
-                        <textarea 
-                            id="description" 
-                            name="description" 
+                        <textarea
+                            id="description"
+                            name="description"
                             rows="4"
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200"
                             placeholder="Deskripsi produk"
@@ -223,12 +223,12 @@
 
                     <!-- Buttons -->
                     <div class="flex items-center justify-end space-x-4 pt-8 border-t border-gray-200 mt-8">
-                        <a href="{{ route('products.index') }}" 
+                        <a href="{{ route('products.index') }}"
                             class="flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200">
                             <x-lucide-x class="w-5 h-5 mr-2" />
                             Batal
                         </a>
-                        <button 
+                        <button
                             type="submit"
                             class="flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                             <x-lucide-save class="w-5 h-5 mr-2" />
@@ -267,7 +267,7 @@
         function calculateMargin() {
             const purchasePrice = parseFloat(document.getElementById('purchase_price').value) || 0;
             const sellingPrice = parseFloat(document.getElementById('selling_price').value) || 0;
-            
+
             if (purchasePrice > 0 && sellingPrice > 0) {
                 const margin = ((sellingPrice - purchasePrice) / purchasePrice * 100).toFixed(1);
                 // You can add margin display here if needed

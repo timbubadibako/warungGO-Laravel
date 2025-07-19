@@ -11,22 +11,20 @@
                         <p class="text-gray-600">Pilih produk untuk menambahkan ke keranjang</p>
                     </div>
                     <div class="w-1/2 max-w-md">
-                        <div class="relative">
-                            <x-lucide-scan class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                wire:model.live="scannedBarcode"
-                                wire:keydown.enter="scanAndAddItem"
-                                placeholder="Scan barcode atau cari produk..."
-                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/70 backdrop-blur-sm transition-all duration-200"
-                                autofocus
-                            >
-                        </div>
+                        <x-icon-field
+                            name="scannedBarcode"
+                            type="text"
+                            placeholder="Scan barcode atau cari produk..."
+                            wire:model.live="scannedBarcode"
+                            wire:keydown.enter="scanAndAddItem"
+                            autofocus
+                        >
+                            <x-slot name="icon">
+                                <x-lucide-scan class="w-5 h-5 text-gray-400 transition-all duration-300" />
+                            </x-slot>
+                        </x-icon-field>
                         @if (session()->has('error'))
-                            <p class="text-red-500 text-xs mt-1 flex items-center">
-                                <x-lucide-alert-circle class="w-3 h-3 mr-1" />
-                                {{ session('error') }}
-                            </p>
+                            <x-input-error :messages="session('error')" class="mt-2" />
                         @endif
                     </div>
                     <div x-data="{ open: false }" class="relative">
@@ -67,7 +65,6 @@
                     </div>
                 </div>
             </header>
-
             <!-- Area Konten Produk (Bisa di-scroll) -->
             <main class="flex-1 px-6 py-6 overflow-y-auto custom-scrollbar">
                 <!-- Daftar Kategori dalam bentuk Card -->
