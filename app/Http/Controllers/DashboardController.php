@@ -27,7 +27,8 @@ class DashboardController extends Controller
             ->get()->sum(fn($item) => ($item->selling_price - $item->purchase_price) * $item->quantity);
         $todaysTransactions = Order::whereDate('created_at', $today)->count();
         $totalProducts = Product::count();
-        $lowStockProducts = Product::where('stock', '<', 10)->orderBy('stock', 'asc')->take(5)->get();
+        $lowStockProducts = Product::where('stock', '<', 10)->orderBy('stock', 'asc')->take(4)->get();
+        $allLowStockProductsCount = Product::where('stock', '<', 10)->count();
         $totalSuppliers = \App\Models\Supplier::count();
         $recentPurchases = \App\Models\Purchase::where('created_at', '>=', Carbon::now()->subDays(7))->count();
         // Monthly growth calculation
@@ -115,17 +116,73 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Recent Activities (dummy, can be made dynamic)
-        $recentActivities = [
-            ['action' => 'Penjualan', 'desc' => 'Transaksi #001234', 'time' => '2 menit lalu', 'icon' => 'dollar-sign', 'color' => 'green'],
-            ['action' => 'Produk Baru', 'desc' => 'Teh Pucuk Harum ditambahkan', 'time' => '15 menit lalu', 'icon' => 'plus', 'color' => 'blue'],
-            ['action' => 'Stok Update', 'desc' => 'Indomie Goreng -10 dus', 'time' => '1 jam lalu', 'icon' => 'package', 'color' => 'purple'],
-            ['action' => 'Supplier Baru', 'desc' => 'PT Sumber Rejeki', 'time' => '3 jam lalu', 'icon' => 'users', 'color' => 'orange'],
+        // --- 4. RECENT ACTIVITIES DINAMIK ---
+        $activities = collect();
+
+        // Penjualan
+        $orders = Order::latest()->take(5)->get()->map(function($order) {
+            return [
+                'action' => 'Penjualan',
+                'desc' => 'Transaksi #' . ($order->invoice_number ?? $order->id),
+                'time' => $order->created_at,
+                'icon' => 'dollar-sign',
+                'color' => 'green',
+            ];
+        });
+
+        // Produk Baru
+        $products = Product::latest()->take(3)->get()->map(function($product) {
+            return [
+                'action' => 'Produk Baru',
+                'desc' => $product->name . ' ditambahkan',
+                'time' => $product->created_at,
+                'icon' => 'plus',
+                'color' => 'blue',
+            ];
+        });
+
+        // Stok Update
+        $stocks = StockMovement::latest()->take(3)->get()->map(function($movement) {
+        $desc = ($movement->product?->name ?? '(Produk dihapus)') . ' ' .
+            ($movement->type == 'in' ? '+' : '-') . abs($movement->quantity) . ' ' . ($movement->unit ?? '');
+        return [
+            'action' => 'Stok Update',
+            'desc' => $desc,
+            'time' => $movement->created_at,
+            'icon' => 'package',
+            'color' => 'purple',
         ];
+    });
+
+        // Supplier Baru
+        $suppliers = \App\Models\Supplier::latest()->take(2)->get()->map(function($supplier) {
+            return [
+                'action' => 'Supplier Baru',
+                'desc' => $supplier->name,
+                'time' => $supplier->created_at,
+                'icon' => 'users',
+                'color' => 'orange',
+            ];
+        });
+
+        // Merge and sort
+        $activities = $orders
+            ->concat($products)
+            ->concat($stocks)
+            ->concat($suppliers)
+            ->sortByDesc('time')
+            ->take(4)
+            ->values();
+
+        // Format waktu human readable
+        $recentActivities = $activities->map(function($item) {
+            $item['time'] = \Carbon\Carbon::parse($item['time'])->diffForHumans();
+            return $item;
+        });
 
         // --- MENGIRIM SEMUA DATA KE VIEW ---
         return view('dashboard', compact(
-            'todaysRevenue', 'todaysProfit', 'todaysTransactions', 'totalProducts', 'lowStockProducts', 'totalSuppliers', 'recentPurchases', 'monthlyGrowth', 'monthlyGrowthNominal', 'totalUnpaidDebts',
+            'todaysRevenue', 'todaysProfit', 'todaysTransactions', 'totalProducts', 'lowStockProducts', 'allLowStockProductsCount', 'totalSuppliers', 'recentPurchases', 'monthlyGrowth', 'monthlyGrowthNominal', 'totalUnpaidDebts',
             'revenueProfitChart', 'stockFlowChart', 'topProductsChart', 'dailyTransactionsChart',
             'topProducts', 'recentOrders', 'categoryPerformance', 'recentActivities'
         ));
@@ -133,21 +190,7 @@ class DashboardController extends Controller
 
     public function dashboard()
     {
-        $categoryPerformance = [
-            ['name' => 'Makanan & Minuman', 'sales' => 45, 'revenue' => 850000, 'color' => 'bg-blue-500'],
-            ['name' => 'Kebutuhan Sehari-hari', 'sales' => 32, 'revenue' => 620000, 'color' => 'bg-green-500'],
-            ['name' => 'Snack & Cemilan', 'sales' => 28, 'revenue' => 420000, 'color' => 'bg-purple-500'],
-            ['name' => 'Lainnya', 'sales' => 18, 'revenue' => 280000, 'color' => 'bg-orange-500'],
-        ];
 
-        $recentActivities = [
-            ['action' => 'Penjualan', 'desc' => 'Transaksi #001234', 'time' => '2 menit lalu', 'icon' => 'dollar-sign', 'color' => 'green'],
-            ['action' => 'Produk Baru', 'desc' => 'Teh Pucuk Harum ditambahkan', 'time' => '15 menit lalu', 'icon' => 'plus', 'color' => 'blue'],
-            ['action' => 'Stok Update', 'desc' => 'Indomie Goreng -10 dus', 'time' => '1 jam lalu', 'icon' => 'package', 'color' => 'purple'],
-            ['action' => 'Supplier Baru', 'desc' => 'PT Sumber Rejeki', 'time' => '3 jam lalu', 'icon' => 'users', 'color' => 'orange'],
-        ];
-
-        return view('dashboard', compact('categoryPerformance', 'recentActivities'));
     }
 
     private function getCategoryColor($categoryName)
