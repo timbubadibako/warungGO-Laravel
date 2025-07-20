@@ -1,8 +1,5 @@
 <x-app-layout>
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-green-50">
-
-
-
         <x-slot name="headerCenter">
             <div class="flex items-center space-x-4">
                 <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-green-600 rounded-xl flex items-center justify-center">

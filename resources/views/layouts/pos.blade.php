@@ -14,6 +14,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
+
 </head>
 <body class="font-sans antialiased">
     <div class="h-screen flex flex-col bg-gray-100">
@@ -32,4 +33,5 @@
 
     </div>
 </body>
+
 </html>

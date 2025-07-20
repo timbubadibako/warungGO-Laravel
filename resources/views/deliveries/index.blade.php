@@ -1,15 +1,10 @@
 <x-app-layout>
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-green-50 p-6">
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                        Daftar Pengiriman
-                    </h1>
-                    <p class="text-gray-600 mt-2">Kelola pengiriman produk kepada pelanggan</p>
-                </div>
-            </div>
-        </div>
+        <x-secondary-header
+            title="Daftar Pengiriman"
+            description="Kelola pengiriman produk kepada pelanggan"
+            buttonText="Tambah Pengiriman"
+            />
 
         <div class="p-6 space-y-6">
             <!-- Stats Cards -->

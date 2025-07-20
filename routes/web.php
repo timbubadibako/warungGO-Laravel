@@ -11,8 +11,7 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\MidtransCallbackController;
-
-
+use App\Http\Controllers\PosController;
 
 Route::get('/', function () {
     return view(view: 'auth/login');
@@ -49,11 +48,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/debts/{debt}/pay', [DebtController::class, 'pay'])->name('debts.pay');
     Route::get('/debts/{debt}/details', [DebtController::class, 'details'])->name('debts.details');
 
-    Route::get('/pos', \App\Livewire\PosComponent::class)
+    Route::get('/pos', [PosController::class, 'index'])
         ->name('pos.index')
         ->middleware('role:Admin|Kasir');
 
-    Route::get('/receipt/order/{order}', [ReceiptController::class, 'show'])
+    Route::post('/pos/update-cart', [PosController::class, 'updateCart'])
+        ->name('pos.update-cart')
+        ->middleware('role:Admin|Kasir');
+
+    Route::get('/pos/checkout', [PosController::class, 'checkout'])
+        ->name('pos.checkout.get')
+        ->middleware('role:Admin|Kasir');
+
+    Route::post('/pos/checkout', [PosController::class, 'checkout'])
+        ->name('pos.checkout')
+        ->middleware('role:Admin|Kasir');    Route::get('/receipt/order/{order}', [ReceiptController::class, 'show'])
         ->name('receipt.show')
         ->middleware('role:Admin|Kasir');
 

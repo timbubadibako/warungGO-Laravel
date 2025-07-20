@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Order;
@@ -33,6 +34,64 @@ class PosComponent extends Component
     public function mount()
     {
         $this->calculateTotals();
+    }
+
+    // Enhanced cart sync with error handling
+    public function syncCart($cart)
+    {
+        try {
+            // Validate cart data
+            if (!is_array($cart)) {
+                $this->dispatch('cart-sync-error', 'Invalid cart data');
+                return;
+            }
+
+            // Validate each cart item
+            foreach ($cart as $productId => $item) {
+                $product = Product::find($productId);
+                if (!$product) {
+                    unset($cart[$productId]);
+                    continue;
+                }
+
+                // Check stock availability
+                if ($item['quantity'] > $product->stock) {
+                    $cart[$productId]['quantity'] = $product->stock;
+                }
+
+                // Ensure price consistency
+                $cart[$productId]['price'] = $product->selling_price;
+                $cart[$productId]['purchase_price'] = $product->purchase_price;
+            }
+
+            $this->cart = $cart;
+            $this->calculateTotals();
+
+            // Emit success event
+            $this->dispatch('cart-synced');
+
+        } catch (\Exception $e) {
+            Log::error('Cart sync failed: ' . $e->getMessage());
+            $this->dispatch('cart-sync-error', 'Sync failed: ' . $e->getMessage());
+        }
+    }
+
+    // Legacy method for backward compatibility
+    public function setCart($cart)
+    {
+        $this->syncCart($cart);
+    }
+
+    // Method untuk mengubah kategori yang dipilih
+    public function selectCategory($categoryId)
+    {
+        $this->selectedCategory = $categoryId;
+        // Reset pencarian saat kategori berubah
+        $this->search = '';
+        $this->scannedBarcode = '';
+
+        // Emit event untuk feedback ke frontend
+        $this->dispatch('category-changed', ['category' => $categoryId]);
     }
 
     public function render()
@@ -225,5 +284,14 @@ class PosComponent extends Component
 
         // Kosongkan kembali input barcode agar siap untuk scan berikutnya
         $this->reset('scannedBarcode');
+    }
+
+    public function clearCart()
+    {
+        $this->cart = [];
+        $this->subtotal = 0;
+        $this->tax = 0;
+        $this->total = 0;
+        session()->flash('success', 'Keranjang belanja telah dibersihkan.');
     }
 }

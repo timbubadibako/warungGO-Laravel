@@ -17,6 +17,9 @@
         <!-- Lucide Icons -->
         <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
+        <!-- Alpine.js -->
+        {{-- <script src="//unpkg.com/alpinejs" defer></script> --}}
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
