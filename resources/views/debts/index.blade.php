@@ -14,41 +14,33 @@
         <div class="p-6 space-y-6">
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-r from-red-400 to-red-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-alert-circle class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Total Hutang</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $unpaidDebts->count() }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-banknote class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Jumlah Hutang</p>
-                            <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($unpaidDebts->sum('amount'), 0, ',', '.') }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-r from-amber-400 to-amber-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-clock class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Rata-rata per Hutang</p>
-                            <p class="text-2xl font-bold text-gray-900">
-                                Rp {{ $unpaidDebts->count() > 0 ? number_format($unpaidDebts->avg('amount'), 0, ',', '.') : '0' }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <x-stat-card
+                    iconBg="bg-gradient-to-r from-red-400 to-red-500"
+                    title="Total Hutang"
+                    :value="$unpaidDebts->count()"
+                >
+                    <x-slot name="icon">
+                        <x-lucide-alert-circle class="w-6 h-6 text-white" />
+                    </x-slot>
+                </x-stat-card>
+                <x-stat-card
+                    iconBg="bg-gradient-to-r from-orange-400 to-orange-500"
+                    title="Jumlah Hutang"
+                    :value="'Rp ' . number_format($unpaidDebts->sum('amount'), 0, ',', '.')"
+                >
+                    <x-slot name="icon">
+                        <x-lucide-banknote class="w-6 h-6 text-white" />
+                    </x-slot>
+                </x-stat-card>
+                <x-stat-card
+                    iconBg="bg-gradient-to-r from-amber-400 to-amber-500"
+                    title="Rata-rata per Hutang"
+                    :value="'Rp ' . ($unpaidDebts->count() > 0 ? number_format($unpaidDebts->avg('amount'), 0, ',', '.') : '0')"
+                >
+                    <x-slot name="icon">
+                        <x-lucide-clock class="w-6 h-6 text-white" />
+                    </x-slot>
+                </x-stat-card>
             </div>
 
             <!-- Success Message -->

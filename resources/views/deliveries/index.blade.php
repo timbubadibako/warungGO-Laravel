@@ -9,50 +9,42 @@
         <div class="p-6 space-y-6">
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-r from-amber-400 to-amber-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-clock class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Menunggu</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $deliveries->where('delivery_status', 'pending')->count() }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-package class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Diproses</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $deliveries->where('delivery_status', 'preparing')->count() }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-truck class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Dikirim</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $deliveries->where('delivery_status', 'out_for_delivery')->count() }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-500 rounded-xl flex items-center justify-center">
-                            <x-lucide-check-circle class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Selesai</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $deliveries->where('delivery_status', 'delivered')->count() }}</p>
-                        </div>
-                    </div>
-                </div>
+                <x-stat-card
+                    iconBg="bg-gradient-to-r from-amber-400 to-amber-500"
+                    title="Menunggu"
+                    :value="$deliveries->where('delivery_status', 'pending')->count()"
+                >
+                    <x-slot name="icon">
+                        <x-lucide-clock class="w-6 h-6 text-white" />
+                    </x-slot>
+                </x-stat-card>
+                <x-stat-card
+                    iconBg="bg-gradient-to-r from-blue-400 to-blue-500"
+                    title="Diproses"
+                    :value="$deliveries->where('delivery_status', 'preparing')->count()"
+                >
+                    <x-slot name="icon">
+                        <x-lucide-package class="w-6 h-6 text-white" />
+                    </x-slot>
+                </x-stat-card>
+                <x-stat-card
+                    iconBg="bg-gradient-to-r from-purple-400 to-purple-500"
+                    title="Dikirim"
+                    :value="$deliveries->where('delivery_status', 'out_for_delivery')->count()"
+                >
+                    <x-slot name="icon">
+                        <x-lucide-truck class="w-6 h-6 text-white" />
+                    </x-slot>
+                </x-stat-card>
+                <x-stat-card
+                    iconBg="bg-gradient-to-r from-green-400 to-green-500"
+                    title="Selesai"
+                    :value="$deliveries->where('delivery_status', 'delivered')->count()"
+                >
+                    <x-slot name="icon">
+                        <x-lucide-check-circle class="w-6 h-6 text-white" />
+                    </x-slot>
+                </x-stat-card>
             </div>
 
             <!-- Success Message -->
